@@ -11,21 +11,21 @@ class Activations:
         self.a = None
     
     def forward(self, z):
-        if (self.type == "ReLU"):
+        if (self.type == "relu"):
             a = np.maximum(0,z)
             self.a = a
             return a
-        elif (self.type == "Sigmoid"):
+        elif (self.type == "sigmoid"):
             a = z * -1
             a = 1 + np.exp(a)
             a = 1/ a
             self.a = a
             return a
-        elif (self.type == "Tanh"):
+        elif (self.type == "tanh"):
             a = np.tanh(z)
             self.a = a
             return a
-        elif (self.type == "Softmax"):
+        elif (self.type == "softmax"):
             #using a numerically stable way to compute softmax since e^z may blow up for large values
             maxv = np.max(z)
             a = z - maxv
@@ -36,16 +36,16 @@ class Activations:
             return a
 
     def backward(self, da):
-        if (self.type == "ReLU"):
+        if (self.type == "relU"):
             d = np.where(self.a > 0, 1, 0)
             return d*da
-        elif (self.type == "Sigmoid"):
+        elif (self.type == "sigmoid"):
             d = self.a * (1 - self.a)
             return d*da
-        elif (self.type == "Tanh"):
+        elif (self.type == "tanh"):
             d = 1 - (self.a * self.a)
             return d*da
-        elif (self.type == "Softmax"):
+        elif (self.type == "softmax"):
             diag = np.diag(self.a)
             outer = np.outer(self.a,self.a)
             return (diag-outer) @ da
