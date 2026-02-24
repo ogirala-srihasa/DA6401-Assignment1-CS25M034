@@ -4,6 +4,9 @@ Entry point for training neural networks with command-line arguments
 """
 
 import argparse
+from utils.data_loader import load_fashion_mnist
+from utils.data_loader import load_mnist
+from sklearn.model_selection import train_test_split
 
 def parse_arguments():
     """
