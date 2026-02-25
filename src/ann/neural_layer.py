@@ -3,7 +3,7 @@ Neural Layer Implementation
 Handles weight initialization, forward pass, and gradient computation
 """
 import numpy as np
-from activations import Activations
+from ann.activations import Activations
 
 class NeuralLayer:
 
@@ -38,7 +38,7 @@ class NeuralLayer:
 
     def forward(self,aprev):
         self.aprev = aprev
-        z = (self.weights @ aprev) + self.bias
+        z = np.dot(self.weights,aprev) + self.bias
         a = self.activation.forward(z)
         return a
     
@@ -46,7 +46,7 @@ class NeuralLayer:
         dz = self.activation.backward(da)
         self.grad_W += np.outer(dz,self.aprev)
         self.grad_b += dz
-        daprev = self.weights.T @ dz
+        daprev = np.dot(self.weights.T, dz)
         return daprev
     
     def reset_gradients(self):

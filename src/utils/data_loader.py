@@ -50,3 +50,4 @@ def load_fashion_mnist():
     x_test = x_test/255.0
 
     return x_train,y_train,x_test,y_test
+

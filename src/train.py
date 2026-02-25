@@ -7,6 +7,9 @@ import argparse
 from utils.data_loader import load_fashion_mnist
 from utils.data_loader import load_mnist
 from sklearn.model_selection import train_test_split
+from ann.neural_network import NeuralNetwork
+import wandb
+
 
 def parse_arguments():
     """
@@ -51,8 +54,20 @@ def main():
     Main training function.
     """
     args = parse_arguments()
+    wandb.init(project=args.wandb_project, config=args)
+    if (args.dataset == 'mnist'):
+        x_train,y_train,x_test,y_test = load_mnist()
+    else:
+        x_train,y_train,x_test,y_test = load_fashion_mnist()
     
+    x_train,x_val,y_train,y_val = train_test_split(x_train,y_train,test_size=0.1,random_state= 6)
+
+    network = NeuralNetwork(args)
+    network.train(x_train,y_train,x_val,y_val,args.epochs,args.batch_size)
+    test_accuracy, test_loss = network.evaluate(x_test,y_test)
     print("Training complete!")
+    network.save_network(args.path)
+
 
 
 if __name__ == '__main__':

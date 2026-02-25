@@ -36,7 +36,7 @@ class Activations:
             return a
 
     def backward(self, da):
-        if (self.type == "relU"):
+        if (self.type == "relu"):
             d = np.where(self.a > 0, 1, 0)
             return d*da
         elif (self.type == "sigmoid"):
