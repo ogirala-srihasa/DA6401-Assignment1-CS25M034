@@ -64,11 +64,13 @@ def evaluate_model(model, X_test, y_test):
     logits = []
     samples = X_test.shape[0]
     loss = 0
-    for sample in range(samples):
-        logits_sample = model.forward(X_test[sample])
-        logits.append(logits_sample)
-        loss += loss_function.loss_computation(y = y_test[sample],yhat = logits_sample)
-    logits = np.array(logits)
+    for i in range(0,samples,128):
+        X_batch = X_test[i:i+128].T
+        y_batch = y_test[i:i+128]
+        logits_batch = model.forward(X_batch)
+        logits.append(logits_batch.T)
+        loss += loss_function.loss_computation(y = y_batch,yhat = logits_batch) * len(y_batch)
+    logits = np.vstack(logits)
     y_pred = np.argmax(logits, axis = 1)
     cm = confusion_matrix(y_true=y_test,y_pred=y_pred)
     TP = np.diag(cm) 
@@ -90,7 +92,7 @@ def evaluate_model(model, X_test, y_test):
 
     return {
         "logits": logits,
-        "loss": loss,
+        "loss": loss/samples,
         "accuracy": accuracy,
         "f1": f1,
         "precision": precision,
@@ -110,7 +112,7 @@ def main():
         _, _, X_test, y_test = load_fashion_mnist()    
     # Load the model
     print(f"Loading model from {args.path}...")
-    model = load_model(args.model_path)
+    model = load_model(args.path)
     # Evaluate
     print("Running evaluation (this may take a moment)...")
     metrics = evaluate_model(model, X_test, y_test)

@@ -69,11 +69,13 @@ class NeuralNetwork:
         Returns:
             return grad_w, grad_b
         """
-        loss = self.loss_function.loss_computation(y_true,y_pred)
+        self.loss_function.loss_computation(y_true,y_pred)
         prev = self.loss_function.backwards()
-        for i in self.layers[::-1]:
-            prev = i.backward(prev)
-        return loss
+        for layer in self.layers[::-1]:
+            prev = layer.backward(prev)
+        for layer in self.layers:
+            layer.grad_W += self.weight_decay * layer.weights
+
     def update_weights(self):
         """
         Update weights using the optimizer.
@@ -87,21 +89,13 @@ class NeuralNetwork:
         training_samples = X_train.shape[0]
         for epoch in range(epochs):
             permutation = np.random.permutation(training_samples)
-            count = 0
-            for sample in permutation:
-                yhat = self.forward(X_train[sample])
-                self.backward(y_train[sample],yhat)
-                count += 1
-                if(count%batch_size == 0):
-                    self.update_weights()
-                    for layer in self.layers:
-                        layer.reset_gradients()
-                    count = 0
-                
-            if(count != 0):
+            for i in range(0,training_samples,batch_size):
+                indices = permutation[i : i + batch_size]
+                batch_X = X_train[indices].T
+                batch_y = y_train[indices]
+                yhat = self.forward(batch_X)
+                self.backward(batch_y, yhat)
                 self.update_weights()
-                for layer in self.layers:
-                    layer.reset_gradients()
             l2_loss = 0
             for layer in self.layers:
                 l2_loss += 0.5 * self.weight_decay * np.sum(np.square(layer.weights))
@@ -128,12 +122,14 @@ class NeuralNetwork:
         test_samples = X.shape[0]
         correct_predicted = 0
         total_loss = 0
-        for sample in range(test_samples):
-            yhat = self.forward(X[sample])
-            ypred = np.argmax(yhat)
-            if(ypred == y[sample]):
-                correct_predicted += 1
-            total_loss += self.loss_function.loss_computation(y[sample],yhat)
+        batch_size = 128
+        for i in range(0,test_samples,128):
+            X_batch = X[i : i + batch_size]
+            y_batch = y[i : i + batch_size]
+            yhat = self.forward(X_batch.T)
+            predictions = np.argmax(yhat, axis=0)
+            correct_predicted += np.sum(predictions == y_batch)
+            total_loss += self.loss_function.loss_computation(y_batch,yhat)* len(y_batch)
         
         return (correct_predicted/test_samples,total_loss/test_samples)
     

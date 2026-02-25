@@ -38,14 +38,15 @@ class NeuralLayer:
 
     def forward(self,aprev):
         self.aprev = aprev
-        z = np.dot(self.weights,aprev) + self.bias
+        z = np.dot(self.weights,aprev) + self.bias.reshape(-1,1)
         a = self.activation.forward(z)
         return a
     
     def backward(self,da):
+        batch_size = da.shape[1]
         dz = self.activation.backward(da)
-        self.grad_W += np.outer(dz,self.aprev)
-        self.grad_b += dz
+        self.grad_W = np.dot(dz,self.aprev.T)/batch_size
+        self.grad_b = np.sum(dz,axis=1)/batch_size
         daprev = np.dot(self.weights.T, dz)
         return daprev
     

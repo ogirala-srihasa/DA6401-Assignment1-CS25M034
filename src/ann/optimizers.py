@@ -15,7 +15,7 @@ class optimizer:
             for layer in layers:
                 W = layer.weights
                 b = layer.bias
-                grad_W = layer.grad_W + (weight_decay * W)
+                grad_W = layer.grad_W
                 grad_b = layer.grad_b
                 layer.weights = W - (learning_rate * grad_W)
                 layer.bias = b - (learning_rate * grad_b)
@@ -25,7 +25,7 @@ class optimizer:
             for layer in layers:
                 W = layer.weights
                 b = layer.bias
-                grad_W = layer.grad_W + (weight_decay * W)
+                grad_W = layer.grad_W
                 grad_b = layer.grad_b
                 v_wold = layer.v_w
                 v_bold = layer.v_b
@@ -41,7 +41,7 @@ class optimizer:
             for layer in layers:
                 W = layer.weights
                 b = layer.bias
-                grad_W = layer.grad_W + (weight_decay * W)
+                grad_W = layer.grad_W
                 grad_b = layer.grad_b
                 v_wold = layer.v_w
                 v_bold = layer.v_b
@@ -57,7 +57,7 @@ class optimizer:
             for layer in layers:
                 W = layer.weights
                 b = layer.bias
-                grad_W = layer.grad_W + (weight_decay * W)
+                grad_W = layer.grad_W
                 grad_b = layer.grad_b
                 m_wold = layer.m_w
                 m_bold = layer.m_b
@@ -74,7 +74,7 @@ class optimizer:
             for layer in layers:
                 W = layer.weights
                 b = layer.bias
-                grad_W = layer.grad_W + (weight_decay * W)
+                grad_W = layer.grad_W
                 grad_b = layer.grad_b
                 m_wold = layer.m_w
                 m_bold = layer.m_b
@@ -101,7 +101,7 @@ class optimizer:
             for layer in layers:
                 W = layer.weights
                 b = layer.bias
-                grad_W = layer.grad_W + (weight_decay * W)
+                grad_W = layer.grad_W
                 grad_b = layer.grad_b
                 m_wold = layer.m_w
                 m_bold = layer.m_b

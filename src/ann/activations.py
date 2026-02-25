@@ -27,10 +27,10 @@ class Activations:
             return a
         elif (self.type == "softmax"):
             #using a numerically stable way to compute softmax since e^z may blow up for large values
-            maxv = np.max(z)
+            maxv = np.max(z,axis=0, keepdims= True)
             a = z - maxv
             a = np.exp(a)
-            sumv = np.sum(a)
+            sumv = np.sum(a, axis= 0, keepdims= True)
             a = a / sumv
             self.a = a
             return a
@@ -46,6 +46,6 @@ class Activations:
             d = 1 - (self.a * self.a)
             return d*da
         elif (self.type == "softmax"):
-            diag = np.diag(self.a)
-            outer = np.outer(self.a,self.a)
-            return (diag-outer) @ da
+            temp = self.a * da
+            st = np.sum(temp,axis= 0, keepdims= True)
+            return self.a * (da - st)
