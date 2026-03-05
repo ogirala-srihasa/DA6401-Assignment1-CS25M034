@@ -26,10 +26,17 @@ class NeuralNetwork:
         self.layers = []
         self.loss_function = Loss_functions('cross_entropy')
         if cli_args:
-            nhiddenlayers = cli_args.num_layers
+            if hasattr(cli_args, "num_layers"):
+                nhiddenlayers = cli_args.num_layers
+            else:
+                nhiddenlayers = cli_args.num_hidden_layers
+            if hasattr(cli_args, "hidden_size"):
+                self.layersizes = cli_args.hidden_size
+            else:
+                self.layersizes = cli_args.hidden_layer_sizes
             self.activation = cli_args.activation
             self.weight_init = cli_args.weight_init
-            self.layersizes = cli_args.hidden_size
+            
             self.optimizer = optimizer(cli_args.optimizer)
             self.loss_function = Loss_functions(cli_args.loss)
             self.learning_rate  = cli_args.learning_rate
