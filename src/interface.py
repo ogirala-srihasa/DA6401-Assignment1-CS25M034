@@ -24,12 +24,19 @@ def parse_arguments():
     - activation: Activation function ('relu', 'sigmoid', 'tanh')
     """
     parser = argparse.ArgumentParser(description='Run inference on test set')
-    parser.add_argument('-p','--model_path',type=str, default='models/best_model.npy')
     parser.add_argument('-d', '--dataset', type=str, default='mnist', help="choose between 'mnist' or 'fashion_mnist'", choices=['mnist','fashion_mnist'])
+    parser.add_argument('-e', '--epochs', type=int, default=10, help='Number of epochs')
     parser.add_argument('-b', '--batch_size', type = int ,default= 128, help='Mini-batch size')
+    parser.add_argument('-lr', '--learning_rate', type= float, default= 0.001, help= 'Learning rate for optimizer')
+    parser.add_argument('-o', '--optimizer', type = str, default= 'sgd', choices=['sgd','momentum','nag','rmsprop'], help = 'choose the optimizer')
     parser.add_argument('-nhl', '--num_layers', type= int, default= 3, help= 'number of hidden layers')
     parser.add_argument('-sz','--hidden_size', type= int,nargs='+', default= [128,64,32], help='list of sizes of hiddenlayers')
     parser.add_argument('-a','--activation', type=str, default= 'relu', choices= ['relu','sigmoid','tanh'])
+    parser.add_argument('-l' , '--loss', type= str, default='cross_entropy', choices=['cross_entropy','mean_squared_error'])
+    parser.add_argument('-w_i', '--weight_init',type = str, default='xavier',choices=['random','zeros','xavier'])
+    parser.add_argument('-wd', '--weight_decay', type = float, default= 0, help='weight decay for L2 regularization')
+    parser.add_argument('-w_p','--wandb_project', type = str, help= 'Project name used to track experiments in Weights & Biases dashboard', default='DA6401-Assignment-1')
+    parser.add_argument('-p','--model_path',type=str, default='best_model.npy')
     return parser.parse_args()
 
 
