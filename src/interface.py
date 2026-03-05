@@ -36,7 +36,7 @@ def parse_arguments():
     parser.add_argument('-w_i', '--weight_init',type = str, default='xavier',choices=['random','zeros','xavier'])
     parser.add_argument('-wd', '--weight_decay', type = float, default= 0, help='weight decay for L2 regularization')
     parser.add_argument('-w_p','--wandb_project', type = str, help= 'Project name used to track experiments in Weights & Biases dashboard', default='DA6401-Assignment-1')
-    parser.add_argument('-p','--model_path',type=str, default='best_model.npy')
+    parser.add_argument('-p','--model_save_path',type=str, default='best_model.npy')
     return parser.parse_args()
 
 
