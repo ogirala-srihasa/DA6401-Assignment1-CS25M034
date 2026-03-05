@@ -17,7 +17,7 @@ class Activations:
             return a
         elif (self.type == "sigmoid"):
             a = z * -1
-            a = 1 + np.exp(a)
+            a = 1 + np.exp(a + 1e-8)
             a = 1/ a
             self.a = a
             return a
@@ -32,6 +32,10 @@ class Activations:
             a = np.exp(a)
             sumv = np.sum(a, axis= 0, keepdims= True)
             a = a / sumv
+            self.a = a
+            return a
+        else:
+            a = z
             self.a = a
             return a
 
@@ -49,3 +53,5 @@ class Activations:
             temp = self.a * da
             st = np.sum(temp,axis= 0, keepdims= True)
             return self.a * (da - st)
+        else:
+            return da * 1

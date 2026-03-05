@@ -24,7 +24,7 @@ def parse_arguments():
     - activation: Activation function ('relu', 'sigmoid', 'tanh')
     """
     parser = argparse.ArgumentParser(description='Run inference on test set')
-    parser.add_argument('-p','--path',type=str, default='../models/best_model.npy')
+    parser.add_argument('-p','--model_path',type=str, default='models/best_model.npy')
     parser.add_argument('-d', '--dataset', type=str, default='mnist', help="choose between 'mnist' or 'fashion_mnist'", choices=['mnist','fashion_mnist'])
     parser.add_argument('-b', '--batch_size', type = int ,default= 128, help='Mini-batch size')
     parser.add_argument('-nhl', '--num_layers', type= int, default= 3, help= 'number of hidden layers')
@@ -38,19 +38,8 @@ def load_model(model_path):
     Load trained model from disk.
 
     """
-    network = NeuralNetwork()
-    parameters = np.load(model_path, allow_pickle= True)
-    for layer_param in parameters:
-        W = layer_param['weights']
-        b = layer_param['bias']
-        a = layer_param['activation']
-        neurons,input_size = W.shape
-        layer = NeuralLayer(input_size,neurons,'random',a)
-        layer.weights = W
-        layer.bias = b
-        network.layers.append(layer)
-
-    return network
+    data = np.load(model_path, allow_pickle=True).item()
+    return data
 
 
 def evaluate_model(model, X_test, y_test): 
@@ -112,7 +101,9 @@ def main():
         _, _, X_test, y_test = load_fashion_mnist()    
     # Load the model
     print(f"Loading model from {args.path}...")
-    model = load_model(args.path)
+    model = NeuralNetwork(args)
+    weights = load_model(args.model_path)
+    model.set_weights(weights)
     # Evaluate
     print("Running evaluation (this may take a moment)...")
     metrics = evaluate_model(model, X_test, y_test)
