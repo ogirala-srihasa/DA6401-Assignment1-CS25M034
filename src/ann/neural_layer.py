@@ -16,44 +16,41 @@ class NeuralLayer:
         self.weights = None
         self.bias = None
         self.aprev = None
-        self.grad_W = np.zeros((neurons,input_size))
+        self.grad_W = np.zeros((input_size,neurons))
         self.grad_b = np.zeros(neurons)
-        self.v_w = np.zeros((neurons,input_size))
+        self.v_w = np.zeros((input_size,neurons))
         self.v_b = np.zeros(neurons)
-        self.m_w = np.zeros((neurons,input_size))
+        self.m_w = np.zeros((input_size,neurons))
         self.m_b = np.zeros(neurons)
 
         if(initialization == "random"):
             #the -0.5 is so that the weights all wont be positive
-            self.weights = np.random.rand(neurons,input_size) - 0.5
+            self.weights = np.random.rand(input_size,neurons) - 0.5
             self.bias = np.random.rand(neurons) - 0.5
 
         elif(initialization == "xavier"):
-            self.weights = np.random.normal(0.0,np.sqrt(2.0)/np.sqrt(input_size + neurons),(neurons,input_size))
+            self.weights = np.random.normal(0.0,np.sqrt(2.0)/np.sqrt(input_size + neurons),(input_size,neurons))
             self.bias = np.zeros(neurons)
 
         elif(initialization == "zeros"):
-            self.weights = np.zeros((neurons,input_size))
+            self.weights = np.zeros((input_size,neurons))
             self.bias = np.zeros(neurons)
 
     def forward(self,aprev):
-        self.aprev = aprev.T
-        z = np.dot(self.weights,aprev.T) + self.bias.reshape(-1,1)
-        a = (self.activation.forward(z)).T
+        self.aprev = aprev
+        z = np.dot(aprev,self.weights) + self.bias
+        a = (self.activation.forward(z))
         return a
     
-    def backward(self,da1):
-        da = da1.T
-        batch_size = da.shape[1]
+    def backward(self,da):
+        batch_size = da.shape[0]
         dz = self.activation.backward(da)
-        self.grad_W = np.dot(dz,self.aprev.T)/batch_size
-        self.grad_b = np.sum(dz,axis=1)/batch_size
-        daprev = np.dot(self.weights.T, dz)
-        return daprev.T
+        self.grad_W = np.dot(self.aprev.T,dz)/batch_size
+        self.grad_b = np.sum(dz,axis=0)/batch_size
+        daprev = np.dot(dz,self.weights.T)
+        return daprev
     
-    def reset_gradients(self):
-        self.grad_W = np.zeros((self.neurons,self.input_size))
-        self.grad_b = np.zeros(self.neurons)
+
 
 
     
