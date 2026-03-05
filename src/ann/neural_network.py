@@ -101,6 +101,7 @@ class NeuralNetwork:
         """
         Train the network for specified epochs.
         """
+        X_train = X_train / 255.0
         X_train,x_val,y_train,y_val = train_test_split(X_train,y_train,test_size=0.1,random_state= 6)
         training_samples = X_train.shape[0]
         for epoch in range(epochs):

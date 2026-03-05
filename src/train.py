@@ -65,7 +65,7 @@ def main():
 
     network = NeuralNetwork(args)
     network.train(x_train,y_train,args.epochs,args.batch_size)
-    test_accuracy, test_loss = network.evaluate(x_test,y_test)
+    test_accuracy, test_loss = network.evaluate(x_test/255.0,y_test)
     print("Training complete!")
     wandb.finish()
     best_weights = network.get_weights()

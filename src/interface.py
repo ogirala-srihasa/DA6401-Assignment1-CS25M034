@@ -49,15 +49,16 @@ def evaluate_model(model, X_test, y_test):
     TODO: Return Dictionary - logits, loss, accuracy, f1, precision, recall
     """
     #assuming crossentropy loss since it is not being taken from cli
+    X_test = X_test / 255.0
     loss_function = Loss_functions('cross_entropy')
     logits = []
     samples = X_test.shape[0]
     loss = 0
     for i in range(0,samples,128):
-        X_batch = X_test[i:i+128].T
+        X_batch = X_test[i:i+128]
         y_batch = y_test[i:i+128]
         logits_batch = model.forward(X_batch)
-        logits.append(logits_batch.T)
+        logits.append(logits_batch)
         loss += loss_function.loss_computation(y = y_batch,yhat = logits_batch) * len(y_batch)
     logits = np.vstack(logits)
     y_pred = np.argmax(logits, axis = 1)
