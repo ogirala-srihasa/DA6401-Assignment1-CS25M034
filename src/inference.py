@@ -56,7 +56,6 @@ def evaluate_model(model, X_test, y_test):
     TODO: Return Dictionary - logits, loss, accuracy, f1, precision, recall
     """
     #assuming crossentropy loss since it is not being taken from cli
-    X_test = X_test / 255.0
     loss_function = Loss_functions('cross_entropy')
     logits = []
     samples = X_test.shape[0]

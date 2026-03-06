@@ -19,8 +19,8 @@ def load_mnist():
     new shape of x_train: (60000,784)
     new shape of x_test: (10000,784)
     '''
-    x_train = np.reshape(x_train,(60000,784))
-    x_test = np.reshape(x_test,(10000,784))
+    x_train = np.reshape(x_train,(60000,784))/255.0
+    x_test = np.reshape(x_test,(10000,784))/255.0
 
 
     return x_train,y_train,x_test,y_test
@@ -39,8 +39,8 @@ def load_fashion_mnist():
     new shape of x_train: (60000,784)
     new shape of x_test: (10000,784)
     '''
-    x_train = np.reshape(x_train,(60000,784))
-    x_test = np.reshape(x_test,(10000,784))
+    x_train = np.reshape(x_train,(60000,784))/255.0
+    x_test = np.reshape(x_test,(10000,784))/255.0
 
     return x_train,y_train,x_test,y_test
 
