@@ -20,7 +20,6 @@ class NeuralNetwork:
         Args:
             cli_args: Command-line arguments for configuring the network
         """
-        print(vars(cli_args))
         self.input_size = 784
         self.output_size = 10
         self.layers = []
