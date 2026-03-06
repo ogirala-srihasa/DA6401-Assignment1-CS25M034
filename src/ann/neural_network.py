@@ -110,6 +110,9 @@ class NeuralNetwork:
         """
         X_train,x_val,y_train,y_val = train_test_split(X_train,y_train,test_size=0.1,random_state= 6)
         training_samples = X_train.shape[0]
+        best_val = 0.0
+        self.best_weights = None
+        global_step = 0
         for epoch in range(epochs):
             permutation = np.random.permutation(training_samples)
             for i in range(0,training_samples,batch_size):
@@ -118,7 +121,18 @@ class NeuralNetwork:
                 batch_y = y_train[indices]
                 yhat = self.forward(batch_X)
                 self.backward(batch_y, yhat)
+                if(global_step < 50):
+                    neuron_grads = self.layers[0].grad_b.flatten()[0:5]
+                    wandb.log({
+                        "iteration_step": global_step,
+                        "neuron_0_grad": neuron_grads[0],
+                        "neuron_1_grad": neuron_grads[1],
+                        "neuron_2_grad": neuron_grads[2],
+                        "neuron_3_grad": neuron_grads[3],
+                        "neuron_4_grad": neuron_grads[4]
+                    })
                 self.update_weights()
+                global_step += 1
             l2_loss = 0
             for layer in self.layers:
                 l2_loss += 0.5 * self.weight_decay * np.sum(np.square(layer.weights))
@@ -126,6 +140,9 @@ class NeuralNetwork:
             train_epoch_accuracy, train_epoch_loss = self.evaluate(X_train,y_train)
             train_epoch_loss += l2_loss
             val_epoch_accuracy, val_epoch_loss = self.evaluate(x_val,y_val)
+            if val_epoch_accuracy > best_val:
+                best_val = val_epoch_accuracy
+                self.best_weights = self.get_weights()
             print(f"Epoch {epoch+1}/{epochs} - Train Loss: {train_epoch_loss:.4f} - Val Acc: {val_epoch_accuracy:.4f}")
             log_dict = {
                 "epoch": epoch+1,
@@ -133,22 +150,23 @@ class NeuralNetwork:
                 "train_accuracy": train_epoch_accuracy, 
                 "val_loss": val_epoch_loss,
                 "val_accuracy": val_epoch_accuracy,
-                "first_layer_grad_norm": np.linalg.norm(self.layers[0].grad_W) # for question 2.4
+                "first_layer_grad_norm": np.linalg.norm(self.layers[0].grad_W) ,# for question 2.4
+                "best_val_accuracy_till_now": best_val
             }
             for i in range(len(self.layers)-1):
                 layer = self.layers[i]
                 dead_neuron_percentage = 0
                 if(layer.activation.type == 'relu'):
-                    dead_neuron_percentage = np.mean((layer.activation.a) <= 1e-9) * 100
+                    dead_neuron_percentage = np.mean((layer.a) <= 1e-2) * 100
                 elif(layer.activation.type == 'tanh'):
-                    dead_neuron_percentage = np.mean(np.abs(layer.activation.a) + 1e-9 >= 1) * 100
+                    dead_neuron_percentage = np.mean(np.abs(layer.a) + 1e-2 >= 1) * 100
                 elif(layer.activation.type == 'sigmoid'):
-                    dead_neuron_percentage = np.mean(np.abs((2 * layer.activation.a)-1) + 1e-9 >= 1) * 100
+                    dead_neuron_percentage = np.mean(np.abs((2 * layer.a)-1) + 1e-2 >= 1) * 100
                 log_dict[f'layer:{i}_dead_neuron_pct'] = dead_neuron_percentage
-
-
-            wandb.log(log_dict)
+                log_dict[f'layer:{i}_activattions'] = wandb.Histogram(layer.a.flatten())
             
+            wandb.log(log_dict)
+        
                 
                 
     

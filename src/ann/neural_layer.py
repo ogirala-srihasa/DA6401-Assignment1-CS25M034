@@ -16,6 +16,7 @@ class NeuralLayer:
         self.weights = None
         self.bias = None
         self.aprev = None
+        self.a = None
         self.grad_W = np.zeros((input_size,neurons))
         self.grad_b = np.zeros(neurons)
         self.v_w = np.zeros((input_size,neurons))
@@ -40,6 +41,7 @@ class NeuralLayer:
         self.aprev = aprev
         z = np.dot(aprev,self.weights) + self.bias
         a = (self.activation.forward(z))
+        self.a = a
         return a
     
     def backward(self,da):

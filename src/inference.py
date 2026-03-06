@@ -25,16 +25,16 @@ def parse_arguments():
     """
     parser = argparse.ArgumentParser(description='Run inference on test set')
     parser.add_argument('-d', '--dataset', type=str, default='mnist', help="choose between 'mnist' or 'fashion_mnist'", choices=['mnist','fashion_mnist'])
-    parser.add_argument('-e', '--epochs', type=int, default=12, help='Number of epochs')
-    parser.add_argument('-b', '--batch_size', type = int ,default= 256, help='Mini-batch size')
+    parser.add_argument('-e', '--epochs', type=int, default=10, help='Number of epochs')
+    parser.add_argument('-b', '--batch_size', type = int ,default= 128, help='Mini-batch size')
     parser.add_argument('-lr', '--learning_rate', type= float, default= 0.001, help= 'Learning rate for optimizer')
     parser.add_argument('-o', '--optimizer', type = str, default= 'rmsprop', choices=['sgd','momentum','nag','rmsprop'], help = 'choose the optimizer')
-    parser.add_argument('-nhl', '--num_layers', type= int, default= 3, help= 'number of hidden layers')
-    parser.add_argument('-sz','--hidden_size', type= int,nargs='+', default= [128,32,32], help='list of sizes of hiddenlayers')
+    parser.add_argument('-nhl', '--num_layers', type= int, default= 2, help= 'number of hidden layers')
+    parser.add_argument('-sz','--hidden_size', type= int,nargs='+', default= [128,128], help='list of sizes of hiddenlayers')
     parser.add_argument('-a','--activation', type=str, default= 'relu', choices= ['relu','sigmoid','tanh'])
     parser.add_argument('-l' , '--loss', type= str, default='cross_entropy', choices=['cross_entropy','mean_squared_error'])
     parser.add_argument('-w_i', '--weight_init',type = str, default='xavier',choices=['random','zeros','xavier'])
-    parser.add_argument('-wd', '--weight_decay', type = float, default= 0.0001, help='weight decay for L2 regularization')
+    parser.add_argument('-wd', '--weight_decay', type = float, default= 0.0, help='weight decay for L2 regularization')
     parser.add_argument('-w_p','--wandb_project', type = str, help= 'Project name used to track experiments in Weights & Biases dashboard', default='DA6401-Assignment-1')
     parser.add_argument('-p','--model_save_path',type=str, default='best_model.npy')
     return parser.parse_args()
@@ -56,7 +56,7 @@ def evaluate_model(model, X_test, y_test):
     TODO: Return Dictionary - logits, loss, accuracy, f1, precision, recall
     """
     #assuming crossentropy loss since it is not being taken from cli
-    loss_function = Loss_functions('cross_entropy')
+    loss_function = model.loss_function
     logits = []
     samples = X_test.shape[0]
     loss = 0
@@ -94,6 +94,20 @@ def evaluate_model(model, X_test, y_test):
         "precision": precision,
         "recall": recall
     }
+def cmatrix(model,X_test,y_test):
+    loss_function = model.loss_function
+    logits = []
+    samples = X_test.shape[0]
+    loss = 0
+    for i in range(0,samples,128):
+        X_batch = X_test[i:i+128]
+        y_batch = y_test[i:i+128]
+        logits_batch = model.forward(X_batch)
+        logits.append(logits_batch)
+        loss += loss_function.loss_computation(y = y_batch,yhat = logits_batch) * len(y_batch)
+    logits = np.vstack(logits)
+    y_pred = np.argmax(logits, axis = 1)
+    return y_test,y_pred
 
 def main():
     """

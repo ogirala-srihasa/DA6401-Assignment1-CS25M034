@@ -32,16 +32,16 @@ def parse_arguments():
     """
     parser = argparse.ArgumentParser(description='Train a neural network')
     parser.add_argument('-d', '--dataset', type=str, default='mnist', help="choose between 'mnist' or 'fashion_mnist'", choices=['mnist','fashion_mnist'])
-    parser.add_argument('-e', '--epochs', type=int, default=12, help='Number of epochs')
-    parser.add_argument('-b', '--batch_size', type = int ,default= 256, help='Mini-batch size')
+    parser.add_argument('-e', '--epochs', type=int, default=10, help='Number of epochs')
+    parser.add_argument('-b', '--batch_size', type = int ,default= 128, help='Mini-batch size')
     parser.add_argument('-lr', '--learning_rate', type= float, default= 0.001, help= 'Learning rate for optimizer')
     parser.add_argument('-o', '--optimizer', type = str, default= 'rmsprop', choices=['sgd','momentum','nag','rmsprop'], help = 'choose the optimizer')
-    parser.add_argument('-nhl', '--num_layers', type= int, default= 3, help= 'number of hidden layers')
-    parser.add_argument('-sz','--hidden_size', type= int,nargs='+', default= [128,32,32], help='list of sizes of hiddenlayers')
+    parser.add_argument('-nhl', '--num_layers', type= int, default= 2, help= 'number of hidden layers')
+    parser.add_argument('-sz','--hidden_size', type= int,nargs='+', default= [128,128], help='list of sizes of hiddenlayers')
     parser.add_argument('-a','--activation', type=str, default= 'relu', choices= ['relu','sigmoid','tanh'])
     parser.add_argument('-l' , '--loss', type= str, default='cross_entropy', choices=['cross_entropy','mean_squared_error'])
     parser.add_argument('-w_i', '--weight_init',type = str, default='xavier',choices=['random','zeros','xavier'])
-    parser.add_argument('-wd', '--weight_decay', type = float, default= 0.0001, help='weight decay for L2 regularization')
+    parser.add_argument('-wd', '--weight_decay', type = float, default= 0.0, help='weight decay for L2 regularization')
     parser.add_argument('-w_p','--wandb_project', type = str, help= 'Project name used to track experiments in Weights & Biases dashboard', default='DA6401-Assignment-1')
     parser.add_argument('-p','--model_save_path',type=str, default='best_model.npy')
 
@@ -68,7 +68,10 @@ def main():
     test_accuracy, test_loss = network.evaluate(x_test,y_test)
     print("Training complete!")
     wandb.finish()
-    best_weights = network.get_weights()
+    if (network.best_weights != None):
+        best_weights = network.best_weights
+    else:
+        best_weights = network.get_weights()
     np.save("best_model.npy", best_weights)
 
 

@@ -1,0 +1,2 @@
+Github Link : [https://github.com/ogirala-srihasa/DA6401-Assignment1-CS25M034](https://github.com/ogirala-srihasa/DA6401-Assignment1-CS25M034)
+Wandb Report: [https://wandb.ai/cs25m034-indian-institute-of-technology-madras/DA6401-Assignment-1/reports/Assignment-1-Report--VmlldzoxNjEyNTQxMA?accessToken=zsjdsqemwzl1iver0nnz6mk62y5ml0ot7otqby61vk03sebf1419fqy8erlaod2t](https://wandb.ai/cs25m034-indian-institute-of-technology-madras/DA6401-Assignment-1/reports/Assignment-1-Report--VmlldzoxNjEyNTQxMA?accessToken=zsjdsqemwzl1iver0nnz6mk62y5ml0ot7otqby61vk03sebf1419fqy8erlaod2t)
