@@ -121,16 +121,16 @@ class NeuralNetwork:
                 batch_y = y_train[indices]
                 yhat = self.forward(batch_X)
                 self.backward(batch_y, yhat)
-                if(global_step < 50):
-                    neuron_grads = self.layers[0].grad_b.flatten()[0:5]
-                    wandb.log({
-                        "iteration_step": global_step,
-                        "neuron_0_grad": neuron_grads[0],
-                        "neuron_1_grad": neuron_grads[1],
-                        "neuron_2_grad": neuron_grads[2],
-                        "neuron_3_grad": neuron_grads[3],
-                        "neuron_4_grad": neuron_grads[4]
-                    })
+                #if(global_step < 50):
+                    # neuron_grads = self.layers[0].grad_b.flatten()[0:5]
+                    # wandb.log({
+                    #     "iteration_step": global_step,
+                    #     "neuron_0_grad": neuron_grads[0],
+                    #     "neuron_1_grad": neuron_grads[1],
+                    #     "neuron_2_grad": neuron_grads[2],
+                    #     "neuron_3_grad": neuron_grads[3],
+                    #     "neuron_4_grad": neuron_grads[4]
+                    # })
                 self.update_weights()
                 global_step += 1
             l2_loss = 0
